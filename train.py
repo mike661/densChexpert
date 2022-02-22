@@ -68,7 +68,7 @@ def main():
         preprocessing_function=tf.keras.applications.densenet.preprocess_input)
     val_data_gen = tf.keras.preprocessing.image.ImageDataGenerator(preprocessing_function=tf.keras.applications.densenet.preprocess_input)
 
-    label_names = list(raw_csv.columns.values)[1:]
+    label_names = list(train_pd.columns.values)[1:]
 
     train_generator = train_data_gen.flow_from_dataframe(
         dataframe=train_pd,
