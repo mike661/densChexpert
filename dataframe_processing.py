@@ -1,9 +1,10 @@
 import pandas as pd
 import numpy as np
 
-raw_csv = pd.read_csv('./raw-data-split/train.csv')
 
-list(raw_csv.columns.values)[1:]
+raw_csv_train = pd.read_csv('./data-split/train.csv')
+raw_csv_valid = pd.read_csv('./data-split/valid.csv')
+
  
 
 def csv_preprocess(raw_csv) -> pd.DataFrame:
@@ -47,3 +48,8 @@ def csv_preprocess(raw_csv) -> pd.DataFrame:
     assert raw_csv.iloc[:,1:].values.any() >= 0
     
     return raw_csv
+
+train_csv = csv_preprocess(raw_csv_train)
+valid_csv = csv_preprocess(raw_csv_valid)
+
+assert list(train_csv.columns.values) == list(valid_csv.columns.values)
