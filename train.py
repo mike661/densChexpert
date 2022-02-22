@@ -113,7 +113,7 @@ def main():
 
     x = before_avg_pool.output
     x = tf.keras.layers.GlobalAveragePooling2D()(x)
-    full_model = Dense(14, activation="sigmoid", name="predictions")(x)
+    full_model = Dense(len(label_names), activation="sigmoid", name="predictions")(x)
 
     model = tf.keras.Model(inputs=img_input, outputs=full_model)
 
