@@ -31,7 +31,8 @@ def main():
             new_experiment_number = int(dirs_array.max())
             experiment_number = new_experiment_number+1
     experiment_path = os.path.join(root, str(experiment_number))
-    output_weights_path = os.path.join(experiment_path, "best_weights-{epoch:003d}-{val_auc:.4f}.h5")
+    output_weights_path = os.path.join(experiment_path, "best_weights-{epoch:003d}-{auc:.4f}.h5")
+    output_weights_path_on_epoch_end = os.path.join(experiment_path, "best_weights_epoch_end-{epoch:003d}-{val_auc:.4f}.h5")
     CSV_PATH = './data-split/'
     train_path = os.path.join(CSV_PATH, 'train.csv')
     val_path = os.path.join(CSV_PATH, 'valid.csv')
@@ -46,18 +47,27 @@ def main():
     # TODO checkpoint
     checkpoint = ModelCheckpoint(
         output_weights_path,
-        monitor="val_auc",
+        monitor="auc",
         save_weights_only=True,
         #save_best_only=True,
         verbose=1,
         mode="max",
         save_freq=steps//10,
     )
+    checkpoint_epoch_end = ModelCheckpoint(
+        output_weights_path_on_epoch_end,
+        monitor="val_auc",
+        save_weights_only=True,
+        #save_best_only=True,
+        verbose=1,
+        mode="max",
+    )
 
     log_csv = CSVLogger(os.path.join(experiment_path, 'logs.csv'), separator=',')
 
     callbacks = [
         checkpoint,
+        checkpoint_epoch_end,
         ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3,
                           verbose=1, mode="min", min_lr=1e-5),
         log_csv,
@@ -132,3 +142,4 @@ def main():
               )
 if __name__ == "__main__":
     main()
+
