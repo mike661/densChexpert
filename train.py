@@ -31,7 +31,7 @@ def main():
             new_experiment_number = int(dirs_array.max())
             experiment_number = new_experiment_number+1
     experiment_path = os.path.join(root, str(experiment_number))
-    output_weights_path = os.path.join(experiment_path, "best_weights-{epoch:003d}-{auc:.4f}.h5")
+    output_weights_path = os.path.join(experiment_path, "best_weights-{epoch:03d}-{auc:.4f}.h5")
     output_weights_path_on_epoch_end = os.path.join(experiment_path, "best_weights_epoch_end-{epoch:003d}-{val_auc:.4f}.h5")
     CSV_PATH = './data-split/'
     train_path = os.path.join(CSV_PATH, 'train.csv')
@@ -40,7 +40,7 @@ def main():
     train_pd = csv_preprocess(train_path)
     val_pd = csv_preprocess(val_path)
     
-    steps = len(train_pd) // batch_size
+    steps = (len(train_pd) // batch_size) // 2
     
     if not os.path.isdir(experiment_path):
         os.makedirs(experiment_path)
@@ -68,7 +68,7 @@ def main():
     callbacks = [
         checkpoint,
         checkpoint_epoch_end,
-        ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3,
+        ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=1,
                           verbose=1, mode="min", min_lr=1e-5),
         log_csv,
     ]
@@ -135,7 +135,7 @@ def main():
 
     model.fit(train_generator,
               steps_per_epoch=steps,
-              epochs=5,
+              epochs=10,
               validation_data=val_generator,
               validation_steps=(val_generator.n // val_generator.batch_size),
               callbacks = callbacks,
